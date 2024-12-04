@@ -24,6 +24,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     await loadProducts();
     setupEventListeners();
     updateCartUI();
+    checkUserAuthentication();
 });
 
 // Event Listeners
@@ -163,6 +164,11 @@ function updatePaymentSummary() {
 }
 
 async function initiatePayment() {
+    if (!currentUser) {
+        showError('Veuillez vous connecter pour procéder au paiement');
+        return;
+    }
+
     try {
         const subtotal = calculateSubtotal();
         const commission = subtotal * COMMISSION_RATE;
@@ -185,7 +191,7 @@ async function initiatePayment() {
         });
 
         const paymentData = await response.json();
-        
+
         if (paymentData.paymentUrl) {
             // Redirect to Flouci payment page
             window.location.href = paymentData.paymentUrl;
@@ -211,4 +217,31 @@ function showError(message) {
 function showSuccess(message) {
     // Implement success notification
     alert(message);
+}
+
+function checkUserAuthentication() {
+    const token = localStorage.getItem('token');
+    if (token) {
+        // Verify token validity
+        fetch(`${API_BASE_URL}/auth/verify`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.valid) {
+                currentUser = data.user;
+            } else {
+                localStorage.removeItem('token');
+                showError('Session expirée. Veuillez vous reconnecter.');
+            }
+        })
+        .catch(error => {
+            console.error('Error verifying token:', error);
+            showError('Erreur lors de la vérification de la session');
+        });
+    }
 }
