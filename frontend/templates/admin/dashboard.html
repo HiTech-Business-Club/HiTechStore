@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - HiTech Store</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="/static/css/admin.css" rel="stylesheet">
+</head>
+<body>
+  <div class="admin-layout">
+    <aside class="sidebar">
+      <div class="sidebar-brand"><i class="bi bi-lightning-charge-fill"></i><span>HiTech Admin</span></div>
+      <nav class="sidebar-nav">
+        <a href="#" class="nav-item active" data-page="dashboard"><i class="bi bi-grid-1x2-fill"></i> Dashboard</a>
+        <a href="#" class="nav-item" data-page="products"><i class="bi bi-box-seam"></i> Produits</a>
+        <a href="#" class="nav-item" data-page="orders"><i class="bi bi-receipt"></i> Commandes</a>
+        <a href="#" class="nav-item" data-page="users"><i class="bi bi-people"></i> Utilisateurs</a>
+        <a href="#" class="nav-item" data-page="providers"><i class="bi bi-building"></i> Fournisseurs</a>
+        <a href="#" class="nav-item" data-page="trending"><i class="bi bi-fire"></i> Tendances</a>
+      </nav>
+      <div class="sidebar-footer">
+        <a href="/" class="btn btn-sm btn-glass w-100"><i class="bi bi-shop"></i> Voir le site</a>
+        <button class="btn btn-sm btn-outline-danger w-100 mt-2" id="logoutBtn"><i class="bi bi-box-arrow-left"></i> Déconnexion</button>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <h4 id="pageTitle">Dashboard</h4>
+        <div class="d-flex align-items-center gap-3">
+          <span id="adminName" class="text-muted"></span>
+          <div class="admin-avatar"><i class="bi bi-person-fill"></i></div>
+        </div>
+      </header>
+
+      <div class="content p-4">
+        <!-- Dashboard -->
+        <div id="page-dashboard" class="admin-page">
+          <div class="row g-4 mb-4">
+            <div class="col-md-3"><div class="stat-card"><div class="stat-icon" style="background:linear-gradient(135deg,#6c5ce7,#a29bfe)"><i class="bi bi-people-fill"></i></div><div><div class="stat-value" id="statUsers">0</div><div class="stat-label">Utilisateurs</div></div></div></div>
+            <div class="col-md-3"><div class="stat-card"><div class="stat-icon" style="background:linear-gradient(135deg,#00cec9,#55efc4)"><i class="bi bi-box-seam"></i></div><div><div class="stat-value" id="statProducts">0</div><div class="stat-label">Produits</div></div></div></div>
+            <div class="col-md-3"><div class="stat-card"><div class="stat-icon" style="background:linear-gradient(135deg,#fdcb6e,#e17055)"><i class="bi bi-receipt"></i></div><div><div class="stat-value" id="statOrders">0</div><div class="stat-label">Commandes</div></div></div></div>
+            <div class="col-md-3"><div class="stat-card"><div class="stat-icon" style="background:linear-gradient(135deg,#00b894,#00cec9)"><i class="bi bi-currency-dollar"></i></div><div><div class="stat-value" id="statRevenue">0</div><div class="stat-label">Revenus (TND)</div></div></div></div>
+          </div>
+          <div class="row g-4">
+            <div class="col-lg-8">
+              <div class="card glass-card">
+                <div class="card-header"><h5 class="mb-0">Commandes récentes</h5></div>
+                <div class="card-body p-0"><table class="table table-dark table-hover mb-0"><thead><tr><th>ID</th><th>Client</th><th>Total</th><th>Statut</th><th>Date</th></tr></thead><tbody id="recentOrders"></tbody></table></div>
+              </div>
+            </div>
+            <div class="col-lg-4">
+              <div class="card glass-card">
+                <div class="card-header"><h5 class="mb-0">Résumé</h5></div>
+                <div class="card-body">
+                  <div class="d-flex justify-content-between py-2"><span>Tendances</span><strong id="statTrending">0</strong></div>
+                  <div class="d-flex justify-content-between py-2"><span>Promotions</span><strong id="statPromos">0</strong></div>
+                  <hr class="border-secondary">
+                  <button class="btn btn-glow w-100" id="discoverBtn"><i class="bi bi-arrow-repeat"></i> Découvrir les tendances</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Products -->
+        <div id="page-products" class="admin-page d-none">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h5 class="mb-0">Produits</h5>
+            <button class="btn btn-glow" id="newProductBtn"><i class="bi bi-plus-lg"></i> Nouveau</button>
+          </div>
+          <div class="card glass-card"><div class="card-body p-0"><table class="table table-dark table-hover mb-0"><thead><tr><th>Nom</th><th>Catégorie</th><th>Prix TND</th><th>Statut</th><th>Actions</th></tr></thead><tbody id="productsTable"></tbody></table></div></div>
+        </div>
+
+        <!-- Orders -->
+        <div id="page-orders" class="admin-page d-none">
+          <h5 class="mb-4">Commandes</h5>
+          <div class="card glass-card"><div class="card-body p-0"><table class="table table-dark table-hover mb-0"><thead><tr><th>ID</th><th>Client</th><th>Produit</th><th>Total</th><th>Statut</th><th>Date</th><th>Actions</th></tr></thead><tbody id="ordersTable"></tbody></table></div></div>
+        </div>
+
+        <!-- Users -->
+        <div id="page-users" class="admin-page d-none">
+          <h5 class="mb-4">Utilisateurs</h5>
+          <div class="card glass-card"><div class="card-body p-0"><table class="table table-dark table-hover mb-0"><thead><tr><th>Nom</th><th>Email</th><th>Rôle</th><th>Inscrit le</th><th>Actions</th></tr></thead><tbody id="usersTable"></tbody></table></div></div>
+        </div>
+
+        <!-- Providers -->
+        <div id="page-providers" class="admin-page d-none">
+          <h5 class="mb-4">Comptes Fournisseurs</h5>
+          <p class="text-muted mb-4">Configurez les comptes internationaux pour chaque fournisseur. Ces comptes seront utilisés pour acheter automatiquement les services.</p>
+          <div class="row g-4" id="providersList"></div>
+        </div>
+
+        <!-- Trending -->
+        <div id="page-trending" class="admin-page d-none">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h5 class="mb-0">Tendances & Promotions</h5>
+            <button class="btn btn-glow" id="discoverTrendingBtn"><i class="bi bi-arrow-repeat"></i> Découvrir maintenant</button>
+          </div>
+          <div class="row g-4" id="trendingList"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Product Modal -->
+  <div class="modal fade" id="productModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content glass-modal">
+        <div class="modal-header border-0"><h5 class="modal-title" id="productModalTitle">Nouveau produit</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+        <div class="modal-body">
+          <form id="productForm">
+            <input type="hidden" id="prodId">
+            <div class="row">
+              <div class="col-8 mb-3"><label class="form-label">Nom</label><input type="text" class="form-control glass-input" id="prodName" required></div>
+              <div class="col-4 mb-3"><label class="form-label">Catégorie</label><select class="form-select glass-input" id="prodCategory"><option value="streaming">Streaming</option><option value="gaming">Gaming</option><option value="software">Logiciel</option><option value="other">Autre</option></select></div>
+            </div>
+            <div class="mb-3"><label class="form-label">Description</label><textarea class="form-control glass-input" id="prodDesc" rows="2" required></textarea></div>
+            <div class="row">
+              <div class="col-4 mb-3"><label class="form-label">Prix (TND)</label><input type="number" class="form-control glass-input" id="prodPrice" step="0.01" required></div>
+              <div class="col-4 mb-3"><label class="form-label">Commission (%)</label><input type="number" class="form-control glass-input" id="prodCommission" value="15"></div>
+              <div class="col-4 mb-3"><label class="form-label">Fournisseur</label><input type="text" class="form-control glass-input" id="prodProvider" required></div>
+            </div>
+            <div class="row">
+              <div class="col-4 mb-3"><label class="form-label">Durée</label><select class="form-select glass-input" id="prodDuration"><option value="1_month">1 mois</option><option value="3_months">3 mois</option><option value="6_months">6 mois</option><option value="12_months">12 mois</option><option value="lifetime">Permanent</option></select></div>
+              <div class="col-4 mb-3"><label class="form-label">Stock (-1 = illimité)</label><input type="number" class="form-control glass-input" id="prodStock" value="-1"></div>
+              <div class="col-4 mb-3"><label class="form-label">URL officielle</label><input type="text" class="form-control glass-input" id="prodUrl"></div>
+            </div>
+            <div class="mb-3"><label class="form-label">Features (une par ligne)</label><textarea class="form-control glass-input" id="prodFeatures" rows="2"></textarea></div>
+            <div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox" id="prodAvailable" checked><label class="form-check-label">Disponible</label></div>
+            <button type="submit" class="btn btn-glow w-100">Sauvegarder</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Provider Modal -->
+  <div class="modal fade" id="providerModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content glass-modal">
+        <div class="modal-header border-0"><h5 class="modal-title">Configurer le fournisseur</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+        <div class="modal-body">
+          <form id="providerForm">
+            <input type="hidden" id="provId">
+            <div class="row">
+              <div class="col-6 mb-3"><label class="form-label">Fournisseur</label><input type="text" class="form-control glass-input" id="provProvider" readonly></div>
+              <div class="col-6 mb-3"><label class="form-label">URL officielle</label><input type="text" class="form-control glass-input" id="provUrl"></div>
+            </div>
+            <div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox" id="provEnabled"><label class="form-check-label">Activé</label></div>
+            <div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox" id="provAutoPurchase"><label class="form-check-label">Achat automatique</label></div>
+            <hr class="border-secondary">
+            <h6 class="mb-3">Compte international</h6>
+            <div class="row">
+              <div class="col-6 mb-3"><label class="form-label">Email du compte</label><input type="email" class="form-control glass-input" id="provEmail"></div>
+              <div class="col-6 mb-3"><label class="form-label">Mot de passe</label><input type="password" class="form-control glass-input" id="provPassword"></div>
+            </div>
+            <hr class="border-secondary">
+            <h6 class="mb-3">Paiement</h6>
+            <div class="mb-3"><label class="form-label">Méthode</label><select class="form-select glass-input" id="provPayMethod"><option value="credit_card">Carte bancaire</option><option value="paypal">PayPal</option><option value="gift_card">Carte cadeau</option><option value="manual">Manuel</option></select></div>
+            <div class="row">
+              <div class="col-6 mb-3"><label class="form-label">Numéro de carte</label><input type="text" class="form-control glass-input" id="provCardNumber" placeholder="XXXX XXXX XXXX XXXX"></div>
+              <div class="col-3 mb-3"><label class="form-label">Expiration</label><input type="text" class="form-control glass-input" id="provCardExpiry" placeholder="MM/AA"></div>
+              <div class="col-3 mb-3"><label class="form-label">CVV</label><input type="text" class="form-control glass-input" id="provCardCvv" placeholder="123"></div>
+            </div>
+            <div class="mb-3"><label class="form-label">Nom du titulaire</label><input type="text" class="form-control glass-input" id="provCardHolder"></div>
+            <div class="mb-3"><label class="form-label">Notes</label><textarea class="form-control glass-input" id="provNotes" rows="2"></textarea></div>
+            <button type="submit" class="btn btn-glow w-100">Sauvegarder</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/static/js/admin.js"></script>
+</body>
+</html>
