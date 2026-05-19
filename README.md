@@ -274,7 +274,7 @@ MIT License - Voir [LICENSE](LICENSE) pour plus de détails.
 
 ## 📧 Contact
 
-• **Email:** contact@hitechstore.com  
+• **Email:** contact@hitechstore.tn  
 • **GitHub:** [HiTech-Business-Club/HiTechStore](https://github.com/HiTech-Business-Club/HiTechStore)  
 • **Issues:** [Ouvrir un issue](https://github.com/HiTech-Business-Club/HiTechStore/issues)
 
