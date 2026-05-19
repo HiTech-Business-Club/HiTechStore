@@ -1,19 +1,41 @@
 {
   "name": "hitechstore",
-  "version": "1.1.0",
-  "description": "Plateforme e-commerce pour services numériques tunisiens",
+  "version": "1.2.0",
+  "description": "Plateforme e-commerce tunisienne pour services numériques (Netflix, Spotify, Microsoft, etc.)",
+  "main": "backend/server.js",
   "scripts": {
     "start": "cd backend && node server.js",
+    "dev": "cd backend && node server.js",
     "seed": "cd backend && node seed.js",
     "docker:up": "docker-compose up -d",
     "docker:down": "docker-compose down",
-    "docker:build": "docker-compose build"
+    "docker:build": "docker-compose build --no-cache",
+    "docker:logs": "docker-compose logs -f",
+    "install:all": "cd backend && npm install",
+    "test": "cd backend && node --test"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/HiTech-Business-Club/HiTechStore.git"
   },
-  "keywords": ["ecommerce", "digital-services", "tunisia", "nodejs", "mongodb"],
+  "keywords": [
+    "ecommerce",
+    "digital-services",
+    "tunisia",
+    "nodejs",
+    "mongodb",
+    "express",
+    "streaming",
+    "netflix",
+    "spotify"
+  ],
   "author": "HiTech Business Club",
-  "license": "MIT"
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/HiTech-Business-Club/HiTechStore/issues"
+  },
+  "homepage": "https://github.com/HiTech-Business-Club/HiTechStore#readme",
+  "engines": {
+    "node": ">=18.0.0"
+  }
 }

@@ -1,15 +1,45 @@
+# Dependencies
 node_modules/
-.env
-.env.local
-.env.*.local
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# OS
 .DS_Store
 Thumbs.db
+
+# Logs
 *.log
-tmp/
+logs/
+
+# Build
 dist/
 build/
+tmp/
+temp/
+
+# Editor
 .vscode/
-.idea/package-lock.json
+.idea/
+*.swp
+*.swo
+
+# Backend
+backend/node_modules/
+backend/package-lock.json
+
+# Frontend
+frontend/node_modules/
+
+# Test
+coverage/
+.nyc_output/
+
+# Misc
+*.bak
+*.tmp
