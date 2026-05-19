@@ -29,6 +29,18 @@ body { background:var(--bg-primary); color:var(--text-primary); font-family:'Int
 .btn-glow { background:var(--gradient); border:none; color:white; padding:0.5rem 1.25rem; border-radius:10px; font-weight:600; box-shadow:0 4px 15px var(--accent-glow); transition:all 0.3s; }
 .btn-glow:hover { transform:translateY(-2px); box-shadow:0 6px 25px var(--accent-glow); color:white; }
 
+/* Social Login Buttons */
+.btn-social { width:48px; height:48px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.3rem; text-decoration:none; transition:all 0.3s; border:1px solid var(--border-color); }
+.btn-social:hover { transform:translateY(-3px); }
+.btn-google { background:#fff; color:#333; }
+.btn-google:hover { box-shadow:0 5px 20px rgba(255,255,255,0.3); }
+.btn-apple { background:#000; color:#fff; }
+.btn-apple:hover { box-shadow:0 5px 20px rgba(0,0,0,0.5); }
+.btn-github { background:#24292e; color:#fff; }
+.btn-github:hover { box-shadow:0 5px 20px rgba(36,41,46,0.5); }
+.btn-facebook { background:#1877f2; color:#fff; }
+.btn-facebook:hover { box-shadow:0 5px 20px rgba(24,119,242,0.5); }
+
 .hero { position:relative; padding:8rem 0 4rem; overflow:hidden; }
 .hero-bg { position:absolute; inset:0; background:radial-gradient(ellipse at 50% 0%,rgba(108,92,231,0.15) 0%,transparent 60%),radial-gradient(ellipse at 80% 50%,rgba(0,206,201,0.08) 0%,transparent 50%); }
 .hero-content { position:relative; z-index:1; }

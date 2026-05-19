@@ -12,6 +12,7 @@ const authRoutes = require('./routes/auth');
 const productRoutes = require('./routes/products');
 const orderRoutes = require('./routes/orders');
 const adminRoutes = require('./routes/admin');
+const oauthRoutes = require('./routes/oauth');
 const errorHandler = require('./middleware/errorHandler');
 const { discoverTrending } = require('./services/autoDiscovery');
 
@@ -27,6 +28,7 @@ const limiter = rateLimit({ windowMs: config.rateLimit.windowMs, max: config.rat
 app.use('/api', limiter);
 
 app.use('/api/auth', authRoutes);
+app.use('/api/oauth', oauthRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/admin', adminRoutes);

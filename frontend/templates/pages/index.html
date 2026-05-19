@@ -113,6 +113,26 @@
             <div id="loginError" class="alert alert-danger d-none"></div>
             <button type="submit" class="btn btn-glow w-100" id="loginSubmitBtn">Se connecter</button>
           </form>
+          
+          <div class="text-center my-3">
+            <span class="text-muted">ou continuer avec</span>
+          </div>
+          
+          <div class="d-flex gap-2 justify-content-center">
+            <a href="/api/oauth/google" class="btn btn-social btn-google" title="Google">
+              <i class="bi bi-google"></i>
+            </a>
+            <a href="/api/oauth/apple" class="btn btn-social btn-apple" title="Apple">
+              <i class="bi bi-apple"></i>
+            </a>
+            <a href="/api/oauth/github" class="btn btn-social btn-github" title="GitHub">
+              <i class="bi bi-github"></i>
+            </a>
+            <a href="/api/oauth/facebook" class="btn btn-social btn-facebook" title="Facebook">
+              <i class="bi bi-facebook"></i>
+            </a>
+          </div>
+          
           <hr class="border-secondary">
           <p class="text-center mb-0">Pas de compte ? <a href="#" id="showRegister" class="accent-link">S'inscrire</a></p>
         </div>

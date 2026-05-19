@@ -3,10 +3,36 @@ let products = [];
 let currentUser = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
+  await handleOAuthCallback();
   await loadProducts();
   setupEvents();
   await checkAuth();
 });
+
+// Handle OAuth callback from URL
+async function handleOAuthCallback() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const auth = urlParams.get('auth');
+  const token = urlParams.get('token');
+  const userStr = urlParams.get('user');
+  
+  if (auth === 'success' && token) {
+    localStorage.setItem('token', token);
+    if (userStr) {
+      try {
+        currentUser = JSON.parse(decodeURIComponent(userStr));
+      } catch (e) {
+        console.error('Failed to parse user data:', e);
+      }
+    }
+    // Clear URL parameters
+    window.history.replaceState({}, document.title, window.location.pathname);
+    notify('Connexion réussie!', 'success');
+  } else if (auth === 'error') {
+    notify('Erreur de connexion sociale. Veuillez réessayer.', 'error');
+    window.history.replaceState({}, document.title, window.location.pathname);
+  }
+}
 
 function setupEvents() {
   document.getElementById('authBtn').addEventListener('click', () => currentUser ? logout() : openLogin());
