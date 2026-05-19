@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:7
+    container_name: hitechstore-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      - MONGO_INITDB_DATABASE=hitechstore_v4
+
+  app:
+    build: .
+    container_name: hitechstore-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mongodb
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - MONGODB_URI=mongodb://mongodb:27017/hitechstore_v4
+      - JWT_SECRET=hitechstore-docker-secret-${RANDOM}
+      - JWT_EXPIRE=72h
+      - FRONTEND_URL=http://localhost:3000
+      - COMMISSION_RATE=15
+
+volumes:
+  mongodb_data:

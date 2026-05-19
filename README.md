@@ -32,6 +32,37 @@ Plateforme e-commerce tunisienne pour l'achat de services numériques internatio
 - Livraison instantanée par email
 - Confirmation avec code unique
 
+## 🐳 Docker (Optionnel)
+
+```bash
+# Installation rapide avec Docker
+curl -sL https://raw.githubusercontent.com/HiTech-Business-Club/HiTechStore/main/install-docker.sh | bash
+
+# Ou manuellement:
+docker-compose up -d
+```
+
+Accéder à:
+- **Store:** http://localhost:3000
+- **Admin:** http://localhost:3000/admin
+
+### Commandes Docker
+
+| Commande | Description |
+|----------|-------------|
+| `docker-compose up -d` | Démarrer les services |
+| `docker-compose down` | Arrêter les services |
+| `docker-compose logs -f` | Voir les logs |
+
+---
+
+## ⚡ Installation Rapide (Curl)
+
+```bash
+# Installation en une ligne
+curl -sL https://raw.githubusercontent.com/HiTech-Business-Club/HiTechStore/main/install-quick.sh | bash
+```
+
 ---
 
 ## 🛠️ Stack Technique
