@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HiTech Store - Services Digitaux Premium | Demo</title>
+  <meta name="description" content="Plateforme e-commerce tunisienne pour services numériques internationaux - Netflix, Spotify, Microsoft, etc.">
+  <meta name="author" content="HiTech Business Club">
+  <meta name="theme-color" content="#0a0a0f">
+  <meta name="robots" content="index, follow">
+  
+  <!-- Open Graph -->
+  <meta property="og:title" content="HiTech Store - Demo">
+  <meta property="og:description" content="Plateforme e-commerce tunisienne pour services numériques internationaux">
+  <meta property="og:url" content="https://hitech-business-club.github.io/HiTechStore/">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://hitech-business-club.github.io/HiTechStore/images/og-image.png">
+  
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="HiTech Store - Demo">
+  <meta name="twitter:description" content="Plateforme e-commerce tunisienne pour services numériques internationaux">
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #0a0a0f;
+      --bg-secondary: #12121a;
+      --accent: #6c5ce7;
+      --success: #00cec9;
+      --text-primary: #e8e8ed;
+      --text-muted: #8888a0;
+      --gradient: linear-gradient(135deg, #6c5ce7, #00cec9);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: var(--bg-primary); color: var(--text-primary); font-family: 'Segoe UI', sans-serif; line-height: 1.6; }
+    
+    .navbar { background: rgba(10,10,15,0.95); padding: 1rem 0; position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(10px); }
+    .navbar-brand { font-size: 1.5rem; font-weight: 700; color: white; display: flex; align-items: center; gap: 0.5rem; }
+    .brand-icon { background: var(--gradient); width: 36px; height: 36px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; }
+    .gradient-text { background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .nav-link { color: var(--text-muted) !important; padding: 0.5rem 1rem !important; transition: color 0.2s; }
+    .nav-link:hover { color: white !important; }
+    
+    .hero { background: linear-gradient(135deg, rgba(108,92,231,0.25) 0%, rgba(0,206,201,0.15) 50%, rgba(108,92,231,0.1) 100%); padding: 120px 0 80px; text-align: center; position: relative; overflow: hidden; }
+    .hero::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at 20% 50%, rgba(108,92,231,0.15) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(0,206,201,0.1) 0%, transparent 50%); }
+    .hero-content { position: relative; z-index: 1; }
+    .hero h1 { font-size: 3.5rem; font-weight: 800; margin-bottom: 1rem; line-height: 1.2; }
+    .hero p { font-size: 1.3rem; color: var(--text-muted); max-width: 650px; margin: 0 auto 2rem; }
+    .btn-glow { background: var(--gradient); color: white; padding: 1rem 2.5rem; border-radius: 12px; font-weight: 600; border: none; font-size: 1.1rem; transition: all 0.3s; display: inline-block; text-decoration: none; }
+    .btn-glow:hover { transform: translateY(-3px); box-shadow: 0 15px 40px rgba(108,92,231,0.5); color: white; text-decoration: none; }
+    .btn-outline { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: white; padding: 1rem 2rem; border-radius: 12px; font-weight: 600; text-decoration: none; display: inline-block; transition: all 0.3s; }
+    .btn-outline:hover { border-color: white; color: white; text-decoration: none; }
+    .badges { display: flex; gap: 1rem; justify-content: center; margin-top: 2rem; flex-wrap: wrap; }
+    .badge-item { background: rgba(255,255,255,0.1); padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem; color: var(--text-muted); }
+    
+    .section { padding: 80px 0; }
+    .section-dark { background: var(--bg-secondary); }
+    .section-title { font-size: 2rem; font-weight: 700; margin-bottom: 3rem; text-align: center; }
+    
+    .feature-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 2rem; height: 100%; transition: all 0.3s; }
+    .feature-card:hover { transform: translateY(-8px); border-color: rgba(108,92,231,0.4); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+    .feature-icon { width: 60px; height: 60px; background: var(--gradient); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; margin-bottom: 1.5rem; }
+    .feature-title { font-size: 1.25rem; font-weight: 600; margin-bottom: 0.75rem; }
+    .feature-desc { color: var(--text-muted); font-size: 0.95rem; }
+    
+    .screenshot { background: var(--bg-secondary); border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,0.08); transition: all 0.3s; }
+    .screenshot:hover { transform: scale(1.02); border-color: rgba(108,92,231,0.4); }
+    .screenshot-img { height: 250px; display: flex; align-items: center; justify-content: center; font-size: 5rem; }
+    .img-store { background: linear-gradient(135deg, #e50914 0%, #b20710 100%); }
+    .img-admin { background: linear-gradient(135deg, #00cec9 0%, #00b894 100%); }
+    .img-checkout { background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%); }
+    .screenshot-body { padding: 1.5rem; }
+    .screenshot-title { font-weight: 600; margin-bottom: 0.5rem; }
+    .screenshot-text { color: var(--text-muted); font-size: 0.9rem; }
+    
+    .tech-stack { display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center; }
+    .tech-badge { background: rgba(108,92,231,0.2); color: #a29bfe; padding: 0.6rem 1.2rem; border-radius: 25px; font-size: 0.9rem; font-weight: 500; }
+    
+    .code-block { background: #0d0d15; border-radius: 12px; padding: 1.5rem; font-family: 'Fira Code', 'Courier New', monospace; font-size: 0.9rem; color: #00cec9; overflow-x: auto; line-height: 1.8; border: 1px solid rgba(255,255,255,0.05); }
+    .code-comment { color: #6a737d; }
+    .code-command { color: #00cec9; }
+    .code-string { color: #a29bfe; }
+    
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: rgba(255,255,255,0.05); border-radius: 16px; overflow: hidden; }
+    .stat-item { background: var(--bg-secondary); padding: 2rem; text-align: center; }
+    .stat-value { font-size: 2.5rem; font-weight: 700; background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .stat-label { color: var(--text-muted); margin-top: 0.5rem; font-size: 0.9rem; }
+    
+    .footer { background: var(--bg-secondary); padding: 3rem 2rem; text-align: center; border-top: 1px solid rgba(255,255,255,0.08); }
+    .footer-links { display: flex; gap: 2rem; justify-content: center; margin-bottom: 1.5rem; flex-wrap: wrap; }
+    .footer-links a { color: var(--text-muted); text-decoration: none; font-size: 0.95rem; transition: color 0.2s; }
+    .footer-links a:hover { color: white; }
+    .footer-copy { color: var(--text-muted); font-size: 0.85rem; }
+    
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 2.2rem; }
+      .hero p { font-size: 1rem; }
+      .stats { grid-template-columns: repeat(2, 1fr); }
+      .section { padding: 50px 0; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="container">
+      <a class="navbar-brand" href="#">
+        <span class="brand-icon"><i class="bi bi-lightning-charge-fill"></i></span>
+        <span class="gradient-text">HiTech</span>Store
+      </a>
+      <div class="d-flex gap-2">
+        <a href="#features" class="nav-link">Fonctionnalités</a>
+        <a href="#tech" class="nav-link">Stack</a>
+        <a href="#install" class="nav-link">Installation</a>
+      </div>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="container hero-content">
+      <h1>HiTech Store <span class="gradient-text">Demo</span></h1>
+      <p>Plateforme e-commerce tunisienne pour services numériques internationaux. Achat automatique, paiement en TND, livraison instantanée.</p>
+      <div class="d-flex gap-3 justify-content-center flex-wrap">
+        <a href="https://github.com/HiTech-Business-Club/HiTechStore" target="_blank" class="btn-glow">
+          <i class="bi bi-github me-2"></i>Code Source
+        </a>
+        <a href="https://github.com/HiTech-Business-Club/HiTechStore/releases" target="_blank" class="btn-outline">
+          <i class="bi bi-download me-2"></i>Télécharger
+        </a>
+      </div>
+      <div class="badges">
+        <span class="badge-item">🌍 Services internationaux</span>
+        <span class="badge-item">💰 Paiement TND</span>
+        <span class="badge-item">⚡ Livraison instantanée</span>
+        <span class="badge-item">🔒 Sécurisé</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="features">
+    <div class="container">
+      <h2 class="section-title">Fonctionnalités clés</h2>
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="feature-card">
+            <div class="feature-icon"><i class="bi bi-lightning-charge"></i></div>
+            <h3 class="feature-title">Achat automatique</h3>
+            <p class="feature-desc">Processus en 1 étape: le client choisit, paie et reçoit son code instantanément. Le backend achète automatiquement sur les sites officiels.</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="feature-card">
+            <div class="feature-icon"><i class="bi bi-currency-exchange"></i></div>
+            <h3 class="feature-title">Paiement en TND</h3>
+            <p class="feature-desc">Prix transparent = Prix original converti en Dinars Tunisiens + 15% commission. Aucune conversion complexe.</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="feature-card">
+            <div class="feature-icon"><i class="bi bi-envelope"></i></div>
+            <h3 class="feature-title">Facture automatique</h3>
+            <p class="feature-desc">Email de confirmation avec facture détaillée, code de confirmation et instructions de livraison.</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="feature-card">
+            <div class="feature-icon"><i class="bi bi-fire"></i></div>
+            <h3 class="feature-title">Auto-discovery</h3>
+            <p class="feature-desc">Scan automatique quotidien des promotions et tendances. Import en 1 clic depuis le panel admin.</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="feature-card">
+            <div class="feature-icon"><i class="bi bi-building"></i></div>
+            <h3 class="feature-title">Comptes fournisseurs</h3>
+            <p class="feature-desc">Configuration des comptes internationaux (Netflix, Spotify, etc.) pour achat automatique depuis le panel admin.</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="feature-card">
+            <div class="feature-icon"><i class="bi bi-speedometer2"></i></div>
+            <h3 class="feature-title">Dashboard complet</h3>
+            <p class="feature-desc">Stats en temps réel, gestion produits/commandes/utilisateurs, configuration paiement.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-dark">
+    <div class="container">
+      <h2 class="section-title">Aperçu</h2>
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="screenshot">
+            <div class="screenshot-img img-store"><i class="bi bi-cart3"></i></div>
+            <div class="screenshot-body">
+              <h4 class="screenshot-title">Store Client</h4>
+              <p class="screenshot-text">Design moderne futuriste, navigation par catégories, filtres tendances/promos.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="screenshot">
+            <div class="screenshot-img img-admin"><i class="bi bi-speedometer2"></i></div>
+            <div class="screenshot-body">
+              <h4 class="screenshot-title">Panel Admin</h4>
+              <p class="screenshot-text">Dashboard complet avec stats, gestion CRUD, configuration fournisseurs.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="screenshot">
+            <div class="screenshot-img img-checkout"><i class="bi bi-bag-check"></i></div>
+            <div class="screenshot-body">
+              <h4 class="screenshot-title">Checkout</h4>
+              <p class="screenshot-text">Formulaire complet avec informations client et compte service provider.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="stats">
+        <div class="stat-item">
+          <div class="stat-value">12+</div>
+          <div class="stat-label">Services</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">5+</div>
+          <div class="stat-label">Catégories</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">7+</div>
+          <div class="stat-label">Fonctionnalités</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">100%</div>
+          <div class="stat-label">Open Source</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-dark" id="tech">
+    <div class="container text-center">
+      <h2 class="section-title">Stack technique</h2>
+      <div class="tech-stack">
+        <span class="tech-badge">Node.js</span>
+        <span class="tech-badge">Express.js</span>
+        <span class="tech-badge">MongoDB</span>
+        <span class="tech-badge">Mongoose</span>
+        <span class="tech-badge">JWT</span>
+        <span class="tech-badge">Bootstrap 5</span>
+        <span class="tech-badge">Custom CSS</span>
+        <span class="tech-badge">Nodemailer</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="install">
+    <div class="container">
+      <h2 class="section-title">Installation locale</h2>
+      <div class="code-block">
+        <span class="code-comment"># Cloner le projet</span><br>
+        <span class="code-command">git clone</span> https://github.com/HiTech-Business-Club/HiTechStore.git<br><br>
+        <span class="code-comment"># Accéder au projet</span><br>
+        <span class="code-command">cd</span> hitechstore-v4/backend<br><br>
+        <span class="code-comment"># Installer les dépendances</span><br>
+        <span class="code-command">npm install</span><br><br>
+        <span class="code-comment"># Initialiser la base de données</span><br>
+        <span class="code-command">npm run seed</span><br><br>
+        <span class="code-comment"># Démarrer le serveur</span><br>
+        <span class="code-command">npm start</span><br><br>
+        <span class="code-string">Store:</span> http://localhost:3000<br>
+        <span class="code-string">Admin:</span> http://localhost:3000/admin<br><br>
+        <span class="code-comment"># Comptes de test</span><br>
+        <span class="code-string">Admin:</span> admin@hitechstore.com / Admin123!<br>
+        <span class="code-string">Client:</span> client@test.com / Client123!
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-dark">
+    <div class="container text-center">
+      <h2 class="mb-4">Prêt à démarrer?</h2>
+      <p class="text-muted mb-4">Lancez le projet en local pour tester toutes les fonctionnalités</p>
+      <div class="d-flex gap-3 justify-content-center flex-wrap">
+        <a href="https://github.com/HiTech-Business-Club/HiTechStore" target="_blank" class="btn-glow">
+          <i class="bi bi-github me-2"></i>Voir sur GitHub
+        </a>
+        <a href="https://github.com/HiTech-Business-Club/HiTechStore/releases" target="_blank" class="btn-outline">
+          <i class="bi bi-tag me-2"></i>Versions
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-links">
+        <a href="https://github.com/HiTech-Business-Club/HiTechStore">GitHub</a>
+        <a href="https://github.com/HiTech-Business-Club/HiTechStore/releases">Releases</a>
+        <a href="https://github.com/HiTech-Business-Club/HiTechStore/issues">Issues</a>
+        <a href="about.html">À propos</a>
+      </div>
+      <p class="footer-copy">© 2026 HiTech Business Club - MIT License</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -35,6 +35,11 @@ app.use('/static', express.static(path.join(__dirname, '../frontend/static')));
 
 app.get('/api/health', (_req, res) => res.json({ success: true, status: 'ok', uptime: process.uptime() }));
 
+app.get('/about', (_req, res) => res.sendFile(path.join(__dirname, '../frontend/templates/pages/about.html')));
+app.get('/demo', (_req, res) => res.sendFile(path.join(__dirname, '../frontend/templates/pages/demo.html')));
+app.get('/about.html', (_req, res) => res.sendFile(path.join(__dirname, '../frontend/templates/pages/about.html')));
+app.get('/demo.html', (_req, res) => res.sendFile(path.join(__dirname, '../frontend/templates/pages/demo.html')));
+
 app.use(errorHandler);
 
 app.get('/admin*', (_req, res) => res.sendFile(path.join(__dirname, '../frontend/templates/admin/dashboard.html')));
