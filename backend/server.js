@@ -35,7 +35,16 @@ app.use('/api/admin', adminRoutes);
 
 app.use('/static', express.static(path.join(__dirname, '../frontend/static')));
 
-app.get('/api/health', (_req, res) => res.json({ success: true, status: 'ok', uptime: process.uptime() }));
+app.get('/api/health', async (_req, res) => {
+  const mongoStatus = mongoose.connection.readyState === 1 ? 'connected' : 'disconnected';
+  res.json({ 
+    success: true, 
+    status: 'ok', 
+    uptime: process.uptime(),
+    mongodb: mongoStatus,
+    timestamp: new Date().toISOString()
+  });
+});
 
 app.get('/about', (_req, res) => res.sendFile(path.join(__dirname, '../frontend/templates/pages/about.html')));
 app.get('/demo', (_req, res) => res.sendFile(path.join(__dirname, '../frontend/templates/pages/demo.html')));
@@ -52,18 +61,15 @@ const startServer = async () => {
     await mongoose.connect(config.mongo.uri, { maxPoolSize: 10, serverSelectionTimeoutMS: 5000 });
     console.log('MongoDB connected');
 
-    await discoverTrending();
-    console.log('Initial trending discovery complete');
-
     cron.schedule('0 6 * * *', async () => {
       console.log('[Cron] Running daily auto-discovery...');
-      await discoverTrending();
+      try { await discoverTrending(); } catch (e) { console.error('Auto-discovery failed:', e.message); }
     });
 
     const server = app.listen(config.port, () => console.log(`Server running on http://localhost:${config.port}`));
 
-    process.on('SIGTERM', () => { mongoose.connection.close(); process.exit(0); });
-    process.on('SIGINT', () => { mongoose.connection.close(); process.exit(0); });
+    process.on('SIGTERM', () => { console.log('SIGTERM received, closing...'); mongoose.connection.close(); server.close(() => process.exit(0)); });
+    process.on('SIGINT', () => { console.log('SIGINT received, closing...'); mongoose.connection.close(); server.close(() => process.exit(0)); });
   } catch (err) {
     console.error('Server start failed:', err.message);
     process.exit(1);
