@@ -6,6 +6,8 @@
   <title>Admin - HiTech Store</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link href="/static/css/variables.css" rel="stylesheet">
   <link href="/static/css/admin.css" rel="stylesheet">
 </head>
 <body>
@@ -30,6 +32,7 @@
       <header class="topbar">
         <h4 id="pageTitle">Dashboard</h4>
         <div class="d-flex align-items-center gap-3">
+          <div id="langSwitcher"></div>
           <span id="adminName" class="text-muted"></span>
           <div class="admin-avatar"><i class="bi bi-person-fill"></i></div>
         </div>
@@ -161,9 +164,9 @@
             <h6 class="mb-3">Paiement</h6>
             <div class="mb-3"><label class="form-label">Méthode</label><select class="form-select glass-input" id="provPayMethod"><option value="credit_card">Carte bancaire</option><option value="paypal">PayPal</option><option value="gift_card">Carte cadeau</option><option value="manual">Manuel</option></select></div>
             <div class="row">
-              <div class="col-6 mb-3"><label class="form-label">Numéro de carte</label><input type="text" class="form-control glass-input" id="provCardNumber" placeholder="XXXX XXXX XXXX XXXX"></div>
+              <div class="col-6 mb-3"><label class="form-label">Numéro de carte</label><input type="password" class="form-control glass-input" id="provCardNumber" placeholder="XXXX XXXX XXXX XXXX"></div>
               <div class="col-3 mb-3"><label class="form-label">Expiration</label><input type="text" class="form-control glass-input" id="provCardExpiry" placeholder="MM/AA"></div>
-              <div class="col-3 mb-3"><label class="form-label">CVV</label><input type="text" class="form-control glass-input" id="provCardCvv" placeholder="123"></div>
+              <div class="col-3 mb-3"><label class="form-label">CVV</label><input type="password" class="form-control glass-input" id="provCardCvv" placeholder="123"></div>
             </div>
             <div class="mb-3"><label class="form-label">Nom du titulaire</label><input type="text" class="form-control glass-input" id="provCardHolder"></div>
             <div class="mb-3"><label class="form-label">Notes</label><textarea class="form-control glass-input" id="provNotes" rows="2"></textarea></div>
@@ -175,6 +178,7 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/static/js/i18n.js"></script>
   <script src="/static/js/admin.js"></script>
 </body>
 </html>

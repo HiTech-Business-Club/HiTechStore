@@ -1,7 +1,7 @@
 const axios = require('axios');
 const config = require('../config');
 
-let cache = { USD: 1, EUR: 1, GBP: 1, rates: {}, lastUpdate: 0 };
+let cache = { rates: {}, lastUpdate: 0 };
 
 async function getRates() {
   if (Date.now() - cache.lastUpdate < 3600000 && cache.rates.USD) return cache.rates;
@@ -12,7 +12,7 @@ async function getRates() {
     return cache.rates;
   } catch (e) {
     console.warn('Exchange rate fetch failed, using cache:', e.message);
-    return cache.rates.USD ? cache.rates : { USD: 1, EUR: 1.08, GBP: 1.27 };
+    return cache.rates.USD ? cache.rates : { USD: 1, EUR: 1.08, GBP: 1.27, TND: 3.1 };
   }
 }
 

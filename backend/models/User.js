@@ -10,6 +10,12 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true, minlength: 6 },
   role: { type: String, enum: ['user', 'admin'], default: 'user' },
   verified: { type: Boolean, default: true },
+  oauth: {
+    googleId: { type: String, sparse: true },
+    appleId: { type: String, sparse: true },
+    githubId: { type: String, sparse: true },
+    facebookId: { type: String, sparse: true },
+  },
 }, { timestamps: true });
 
 userSchema.pre('save', async function (next) {

@@ -72,8 +72,7 @@ echo -e "  ${GREEN}Store:${NC}   http://localhost:3000"
 echo -e "  ${GREEN}Admin:${NC}  http://localhost:3000/admin"
 echo ""
 echo -e "${YELLOW}Comptes:${NC}"
-echo "  Admin:   admin@hitechstore.com / Admin123!"
-echo "  Client: client@test.com / Client123!"
+echo "  Consultez le fichier seed.js pour les identifiants par défaut"
 
 # Clean up
 cd /

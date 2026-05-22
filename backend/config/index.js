@@ -15,22 +15,22 @@ module.exports = {
     google: {
       clientID: process.env.GOOGLE_CLIENT_ID || '',
       clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
-      callbackURL: process.env.GOOGLE_CALLBACK_URL || 'http://localhost:3000/api/auth/google/callback',
+      callbackURL: process.env.GOOGLE_CALLBACK_URL || 'http://localhost:3000/api/oauth/google/callback',
     },
     apple: {
       clientID: process.env.APPLE_CLIENT_ID || '',
       clientSecret: process.env.APPLE_CLIENT_SECRET || '',
-      callbackURL: process.env.APPLE_CALLBACK_URL || 'http://localhost:3000/api/auth/apple/callback',
+      callbackURL: process.env.APPLE_CALLBACK_URL || 'http://localhost:3000/api/oauth/apple/callback',
     },
     github: {
       clientID: process.env.GITHUB_CLIENT_ID || '',
       clientSecret: process.env.GITHUB_CLIENT_SECRET || '',
-      callbackURL: process.env.GITHUB_CALLBACK_URL || 'http://localhost:3000/api/auth/github/callback',
+      callbackURL: process.env.GITHUB_CALLBACK_URL || 'http://localhost:3000/api/oauth/github/callback',
     },
     facebook: {
       appID: process.env.FACEBOOK_APP_ID || '',
       appSecret: process.env.FACEBOOK_APP_SECRET || '',
-      callbackURL: process.env.FACEBOOK_CALLBACK_URL || 'http://localhost:3000/api/auth/facebook/callback',
+      callbackURL: process.env.FACEBOOK_CALLBACK_URL || 'http://localhost:3000/api/oauth/facebook/callback',
     },
   },
 };

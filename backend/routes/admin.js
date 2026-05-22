@@ -4,6 +4,7 @@ const { body, param } = require('express-validator');
 const { auth, adminOnly } = require('../middleware/auth');
 const validate = require('../middleware/validate');
 const asyncHandler = require('../utils/asyncHandler');
+const config = require('../config');
 const User = require('../models/User');
 const Product = require('../models/Product');
 const Order = require('../models/Order');
@@ -127,13 +128,9 @@ router.post('/trending/import/:id', [param('id').isMongoId()], validate, asyncHa
   res.json({ success: true, message: 'Produit importé' });
 }));
 
-// Settings
+// Settings (read-only, configured via environment)
 router.get('/settings', asyncHandler(async (req, res) => {
-  res.json({ success: true, data: { commissionRate: 15, currency: 'TND' } });
-}));
-
-router.put('/settings', asyncHandler(async (req, res) => {
-  res.json({ success: true, message: 'Paramètres sauvegardés' });
+  res.json({ success: true, data: { commissionRate: config.commission?.rate || 15, currency: 'TND' } });
 }));
 
 module.exports = router;

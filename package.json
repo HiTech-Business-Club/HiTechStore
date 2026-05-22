@@ -1,6 +1,6 @@
 {
   "name": "hitechstore",
-  "version": "1.2.0",
+  "version": "4.0.0",
   "description": "Plateforme e-commerce tunisienne pour services numériques (Netflix, Spotify, Microsoft, etc.)",
   "main": "backend/server.js",
   "scripts": {

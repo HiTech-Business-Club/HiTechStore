@@ -1,5 +1,5 @@
 const API = '/api';
-let products = [];
+let product = null;
 let currentUser = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -7,32 +7,21 @@ document.addEventListener('DOMContentLoaded', async () => {
   const switcher = document.getElementById('langSwitcher');
   if (switcher) switcher.innerHTML = I18N.createSwitcher();
   await handleOAuthCallback();
-  await loadProducts();
+  await loadProduct();
   setupEvents();
   await checkAuth();
 });
 
-// Handle OAuth callback from URL
 async function handleOAuthCallback() {
   const urlParams = new URLSearchParams(window.location.search);
   const auth = urlParams.get('auth');
   const token = urlParams.get('token');
-  const userStr = urlParams.get('user');
-  
   if (auth === 'success' && token) {
     localStorage.setItem('token', token);
-    if (userStr) {
-      try {
-        currentUser = JSON.parse(decodeURIComponent(userStr));
-      } catch (e) {
-        console.error('Failed to parse user data:', e);
-      }
-    }
-    // Clear URL parameters
     window.history.replaceState({}, document.title, window.location.pathname);
-    notify(t('auth.success') + '!', 'success');
+    notify('Connexion réussie!', 'success');
   } else if (auth === 'error') {
-    notify('Erreur de connexion sociale. Veuillez réessayer.', 'error');
+    notify('Erreur de connexion. Veuillez réessayer.', 'error');
     window.history.replaceState({}, document.title, window.location.pathname);
   }
 }
@@ -42,7 +31,6 @@ function setupEvents() {
   document.getElementById('loginForm').addEventListener('submit', handleLogin);
   document.getElementById('registerForm').addEventListener('submit', handleRegister);
   document.getElementById('checkoutForm').addEventListener('submit', handleCheckout);
-  document.getElementById('ordersBtn').addEventListener('click', () => { if (!currentUser) return openLogin(); loadOrders(); new bootstrap.Modal(document.getElementById('ordersModal')).show(); });
   document.getElementById('showRegister').addEventListener('click', e => { e.preventDefault(); switchModal('loginModal', 'registerModal'); });
   document.getElementById('showLogin').addEventListener('click', e => { e.preventDefault(); switchModal('registerModal', 'loginModal'); });
 }
@@ -50,70 +38,132 @@ function setupEvents() {
 function switchModal(from, to) { bootstrap.Modal.getInstance(document.getElementById(from)).hide(); setTimeout(() => new bootstrap.Modal(document.getElementById(to)).show(), 300); }
 function openLogin() { new bootstrap.Modal(document.getElementById('loginModal')).show(); }
 
-async function loadProducts() {
+async function loadProduct() {
+  const pathParts = window.location.pathname.split('/');
+  const productId = pathParts[pathParts.length - 1];
+
+  if (!productId) {
+    document.getElementById('productContent').innerHTML = `<div class="text-center py-5"><h3>${t('product.notfound')}</h3><a href="/" class="btn btn-glow mt-3">${t('product.back')}</a></div>`;
+    return;
+  }
+
   try {
-    const [allRes, trendRes, promoRes] = await Promise.all([
-      fetch(`${API}/products`),
-      fetch(`${API}/products?trending=true`),
-      fetch(`${API}/products?promo=true`),
-    ]);
-    const all = await allRes.json();
-    const trend = await trendRes.json();
-    const promo = await promoRes.json();
-    if (all.success) products = all.data.products;
-    renderSection('trendingProducts', trend.success ? trend.data.products : []);
-    renderSection('promoProducts', promo.success ? promo.data.products : []);
-    renderByCategory();
-  } catch (e) { notify(t('error.network'), 'error'); }
+    const res = await fetch(`${API}/products/${productId}`);
+    const data = await res.json();
+
+    if (!data.success || !data.data) {
+      document.getElementById('productContent').innerHTML = `<div class="text-center py-5"><h3>${t('product.notfound')}</h3><a href="/" class="btn btn-glow mt-3">${t('product.back')}</a></div>`;
+      return;
+    }
+
+    product = data.data;
+    renderProduct();
+    loadRelated();
+  } catch (e) {
+    document.getElementById('productContent').innerHTML = `<div class="text-center py-5"><h3>${t('error.network')}</h3><a href="/" class="btn btn-glow mt-3">${t('product.back')}</a></div>`;
+  }
 }
 
-function renderSection(elId, items) {
-  const el = document.getElementById(elId);
-  if (!el) return;
-  el.innerHTML = items.length ? items.map(p => cardHTML(p)).join('') : '<p class="text-muted">Aucun produit</p>';
-}
+function renderProduct() {
+  const p = product;
+  const price = p.originalPrice;
+  const commission = Math.round(price * (p.commissionRate || 15) / 100 * 100) / 100;
+  const total = Math.round((price + commission) * 100) / 100;
+  const durationLabel = { '1_month': `1 ${t('product.month')}`, '3_months': `3 ${t('product.months')}`, '6_months': `6 ${t('product.months')}`, '12_months': `12 ${t('product.months')}`, 'lifetime': t('product.lifetime') }[p.duration] || p.duration;
 
-function renderByCategory() {
-  const cats = { streaming: 'streamingProducts', gaming: 'gamingProducts', software: 'softwareProducts' };
-  Object.entries(cats).forEach(([cat, id]) => {
-    const items = products.filter(p => p.category === cat);
-    renderSection(id, items);
-  });
-}
-
-function cardHTML(p) {
-  const price = p.finalPrice ? p.finalPrice.toFixed(2) : (p.originalPrice * 1.15).toFixed(2);
-  const feats = (p.features || []).slice(0, 3).map(f => `<li>${esc(f)}</li>`).join('');
   const badges = [];
-  if (p.isTrending) badges.push(`<span class="product-badge badge-trending"><i class="bi bi-fire"></i> ${t('product.trending')}</span>`);
-  if (p.isPromo) badges.push(`<span class="product-badge badge-promo"><i class="bi bi-tag"></i> ${t('product.promo')}</span>`);
-  const origPrice = p.isPromo && p.promoOriginalPrice ? `<div class="product-original-price">${p.promoOriginalPrice.toFixed(2)} TND</div>` : '';
+  if (p.isTrending) badges.push(`<span class="product-badge-lg badge-trending-lg"><i class="bi bi-fire"></i> ${t('product.trending')}</span>`);
+  if (p.isPromo) badges.push(`<span class="product-badge-lg badge-promo-lg"><i class="bi bi-tag"></i> ${t('product.promo')}</span>`);
+  badges.push(`<span class="product-badge-lg badge-duration-lg"><i class="bi bi-clock"></i> ${durationLabel}</span>`);
+
+  const features = (p.features || []).map(f => `<li><i class="bi bi-check-circle-fill"></i> ${esc(f)}</li>`).join('');
 
   const imageHTML = p.image
-    ? `<img src="${esc(p.image)}" alt="${esc(p.name)}" class="product-img" loading="lazy" onerror="this.parentElement.innerHTML=catIconFallback('${p.category}')">`
-    : catIcon(p.category);
+    ? `<img src="${esc(p.image)}" alt="${esc(p.name)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+    : '';
+  const iconHTML = `<div class="category-icon" style="display:${p.image ? 'none' : 'flex'};font-size:8rem">${catIcon(p.category)}</div>`;
 
-  return `
-    <div class="col-lg-3 col-md-4 col-sm-6">
-      <div class="product-card cat-${p.category}" onclick="window.location.href='/product/${p._id}'" style="cursor:pointer">
-        ${badges.join('')}
-        <div class="product-image">${imageHTML}</div>
-        <div class="product-body">
-          <h3 class="product-title">${esc(p.name)}</h3>
-          <p class="product-desc">${esc(p.description)}</p>
-          ${feats ? `<ul class="product-features">${feats}</ul>` : ''}
-          ${origPrice}
-          <div class="product-price">${price} <span class="currency">TND</span></div>
-          <button class="btn btn-glow w-100" onclick="event.stopPropagation(); openCheckout('${p._id}')">
-            <i class="bi bi-bag-check"></i> ${t('product.order')}
+  const categoryLabel = { streaming: 'Streaming', gaming: 'Gaming', software: 'Logiciel', other: 'Autre' }[p.category] || p.category;
+
+  document.getElementById('productContent').innerHTML = `
+    <div class="product-showcase row align-items-center">
+      <div class="col-lg-5">
+        <div class="product-image-container">
+          ${imageHTML}
+          ${iconHTML}
+        </div>
+      </div>
+      <div class="col-lg-7">
+        <div class="product-info">
+          <div class="product-breadcrumb">
+            <a href="/">Accueil</a> / <a href="/#${p.category}">${categoryLabel}</a> / ${esc(p.name)}
+          </div>
+          <h1 class="product-detail-title">${esc(p.name)}</h1>
+          <div class="product-provider">
+            <span class="product-provider-badge"><i class="bi bi-building"></i> ${esc(p.provider)}</span>
+            ${p.providerUrl ? `<a href="${esc(p.providerUrl)}" target="_blank" rel="noopener" class="product-provider-badge"><i class="bi bi-box-arrow-up-right"></i> ${t('product.provider')}</a>` : ''}
+          </div>
+          <p class="product-description">${esc(p.description)}</p>
+          <div class="product-badges">${badges.join('')}</div>
+          ${features ? `<ul class="product-features-list">${features}</ul>` : ''}
+          <div class="pricing-card">
+            <div class="pricing-row">
+              <span class="pricing-label">${t('product.service')}</span>
+              <span class="pricing-value">${price.toFixed(2)} TND</span>
+            </div>
+            <div class="pricing-row">
+              <span class="pricing-label">${t('product.tva')}</span>
+              <span class="pricing-value">${commission.toFixed(2)} TND</span>
+            </div>
+            <div class="pricing-row total">
+              <span>${t('product.total')}</span>
+              <span class="pricing-value total-price gradient-text">${total.toFixed(2)} TND</span>
+            </div>
+          </div>
+          <button class="btn btn-glow btn-buy-lg w-100" onclick="openCheckout()">
+            <i class="bi bi-bag-check"></i> ${t('product.ordernow')}
           </button>
         </div>
       </div>
     </div>`;
+
+  document.title = `${p.name} - HiTech Store`;
 }
 
-function catIconFallback(c) {
-  return catIcon(c);
+async function loadRelated() {
+  if (!product) return;
+  try {
+    const res = await fetch(`${API}/products?category=${product.category}&limit=4`);
+    const data = await res.json();
+    if (data.success && data.data.products.length > 0) {
+      const related = data.data.products.filter(p => p._id !== product._id).slice(0, 4);
+      if (related.length > 0) {
+        document.getElementById('relatedProducts').innerHTML = related.map(p => relatedCardHTML(p)).join('');
+        document.getElementById('relatedSection').style.display = 'block';
+      }
+    }
+  } catch (e) { /* silent fail */ }
+}
+
+function relatedCardHTML(p) {
+  const price = p.finalPrice ? p.finalPrice.toFixed(2) : (p.originalPrice * 1.15).toFixed(2);
+  const imageHTML = p.image
+    ? `<img src="${esc(p.image)}" alt="${esc(p.name)}" style="width:60px;height:60px;object-fit:contain">`
+    : `<span style="font-size:2rem">${catIcon(p.category)}</span>`;
+
+  return `
+    <div class="col-lg-3 col-md-4 col-sm-6">
+      <a href="/product/${p._id}" class="product-card-link">
+        <div class="product-card cat-${p.category}">
+          <div class="product-image" style="height:140px">${imageHTML}</div>
+          <div class="product-body">
+            <h3 class="product-title">${esc(p.name)}</h3>
+            <p class="product-desc">${esc(p.description)}</p>
+            <div class="product-price">${price} <span class="currency">TND</span></div>
+          </div>
+        </div>
+      </a>
+    </div>`;
 }
 
 function catIcon(c) {
@@ -121,21 +171,21 @@ function catIcon(c) {
   return icons[c] || icons.other;
 }
 
-async function openCheckout(productId) {
-  const p = products.find(x => x._id === productId);
-  if (!p) return;
+function openCheckout() {
+  if (!product) return;
   if (!currentUser) { notify(t('auth.required'), 'error'); return openLogin(); }
 
-  document.getElementById('checkoutProductId').value = productId;
+  const p = product;
+  document.getElementById('checkoutProductId').value = p._id;
   document.getElementById('checkoutTitle').innerHTML = `<i class="bi bi-bag-check"></i> Commander ${esc(p.name)}`;
 
   const price = p.originalPrice;
-  const commission = Math.round(price * 15 / 100 * 100) / 100;
+  const commission = Math.round(price * (p.commissionRate || 15) / 100 * 100) / 100;
   const total = Math.round((price + commission) * 100) / 100;
 
   const checkoutImg = p.image
     ? `<img src="${esc(p.image)}" alt="${esc(p.name)}" style="width:60px;height:60px;border-radius:12px;object-fit:contain;background:var(--bg-card);padding:8px">`
-    : `<div style="width:60px;height:60px;border-radius:12px;background:${catBg(p.category)};display:flex;align-items:center;justify-content:center;font-size:1.5rem">${catIcon(p.category)}</div>`;
+    : `<div style="width:60px;height:60px;border-radius:12px;background:var(--gradient);display:flex;align-items:center;justify-content:center;font-size:1.5rem">${catIcon(p.category)}</div>`;
 
   document.getElementById('checkoutProductInfo').innerHTML = `
     <div class="d-flex align-items-center gap-3">
@@ -152,19 +202,16 @@ async function openCheckout(productId) {
   document.getElementById('coCommission').textContent = commission.toFixed(2) + ' TND';
   document.getElementById('coTotal').textContent = total.toFixed(2) + ' TND';
 
-  document.getElementById('coFirstName').value = currentUser.firstName || '';
-  document.getElementById('coLastName').value = currentUser.lastName || '';
-  document.getElementById('coEmail').value = currentUser.email || '';
-  document.getElementById('coPhone').value = currentUser.phone || '';
-  document.getElementById('coAddress').value = currentUser.address || '';
+  if (currentUser) {
+    document.getElementById('coFirstName').value = currentUser.firstName || '';
+    document.getElementById('coLastName').value = currentUser.lastName || '';
+    document.getElementById('coEmail').value = currentUser.email || '';
+    document.getElementById('coPhone').value = currentUser.phone || '';
+    document.getElementById('coAddress').value = currentUser.address || '';
+  }
 
   document.getElementById('checkoutError').classList.add('d-none');
   new bootstrap.Modal(document.getElementById('checkoutModal')).show();
-}
-
-function catBg(c) {
-  const bgs = { streaming: 'linear-gradient(135deg,#e50914,#b20710)', gaming: 'linear-gradient(135deg,#0078d4,#00bcf2)', software: 'linear-gradient(135deg,#00a862,#00cec9)', other: 'linear-gradient(135deg,#6c5ce7,#a29bfe)' };
-  return bgs[c] || bgs.other;
 }
 
 async function handleCheckout(e) {
@@ -297,28 +344,6 @@ async function checkAuth() {
     if (data.success) { currentUser = data.user; updateAuthUI(); }
     else localStorage.removeItem('token');
   } catch { localStorage.removeItem('token'); }
-}
-
-async function loadOrders() {
-  const el = document.getElementById('ordersList');
-  el.innerHTML = `<p class="text-center text-muted">${t('loading')}</p>`;
-  try {
-    const res = await fetch(`${API}/orders/my-orders`, { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
-    const data = await res.json();
-    if (!data.success || data.data.length === 0) { el.innerHTML = `<p class="text-center text-muted">${t('nav.orders')}</p>`; return; }
-    el.innerHTML = data.data.map(o => `
-      <div class="order-item">
-        <div class="order-item-header">
-          <div><strong>${esc(o.productName)}</strong><br><small class="text-muted">${o.orderNumber}</small></div>
-          <span class="badge-status badge-${o.status}">${o.status}</span>
-        </div>
-        <div class="d-flex justify-content-between mt-2">
-          <small class="text-muted">${new Date(o.createdAt).toLocaleDateString('fr-FR')}</small>
-          <strong class="gradient-text">${o.finalPriceTND} TND</strong>
-        </div>
-        ${o.purchaseDetails && o.purchaseDetails.confirmationCode ? `<div class="mt-2 p-2 rounded" style="background:var(--bg-card)"><small><strong>Code:</strong> ${o.purchaseDetails.confirmationCode}</small><br><small class="text-muted">${o.purchaseDetails.deliveryDetails}</small></div>` : ''}
-      </div>`).join('');
-  } catch { el.innerHTML = '<p class="text-center text-danger">Erreur de chargement</p>'; }
 }
 
 function notify(msg, type = 'info') {

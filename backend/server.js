@@ -19,7 +19,7 @@ const { discoverTrending } = require('./services/autoDiscovery');
 const app = express();
 
 app.use(compression());
-app.use(cors({ origin: '*', credentials: true }));
+app.use(cors({ origin: config.frontend.url || '*' }));
 app.use(helmet({ contentSecurityPolicy: false, crossOriginEmbedderPolicy: false }));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
@@ -50,6 +50,7 @@ app.get('/about', (_req, res) => res.sendFile(path.join(__dirname, '../frontend/
 app.get('/demo', (_req, res) => res.sendFile(path.join(__dirname, '../frontend/templates/pages/demo.html')));
 app.get('/about.html', (_req, res) => res.sendFile(path.join(__dirname, '../frontend/templates/pages/about.html')));
 app.get('/demo.html', (_req, res) => res.sendFile(path.join(__dirname, '../frontend/templates/pages/demo.html')));
+app.get('/product/:id', (_req, res) => res.sendFile(path.join(__dirname, '../frontend/templates/pages/product.html')));
 
 app.use(errorHandler);
 

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Produit - HiTech Store</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link href="/static/css/variables.css" rel="stylesheet">
+  <link href="/static/css/store.css" rel="stylesheet">
+  <link href="/static/css/product-detail.css" rel="stylesheet">
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="/">
+        <span class="brand-icon"><i class="bi bi-lightning-charge-fill"></i></span>
+        HiTech<span class="brand-accent">Store</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMain">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navMain">
+        <ul class="navbar-nav mx-auto">
+          <li class="nav-item"><a class="nav-link" href="/#trending" data-i18n="nav.trending">Tendances</a></li>
+          <li class="nav-item"><a class="nav-link" href="/#promos" data-i18n="nav.promos">Promos</a></li>
+          <li class="nav-item"><a class="nav-link" href="/#streaming" data-i18n="nav.streaming">Streaming</a></li>
+          <li class="nav-item"><a class="nav-link" href="/#gaming" data-i18n="nav.gaming">Gaming</a></li>
+          <li class="nav-item"><a class="nav-link" href="/#software" data-i18n="nav.software">Logiciels</a></li>
+        </ul>
+        <div class="d-flex align-items-center gap-2" id="langSwitcher"></div>
+        <div class="d-flex align-items-center gap-2">
+          <button class="btn btn-glass" id="ordersBtn" style="display:none"><i class="bi bi-receipt"></i> <span data-i18n="nav.orders">Mes commandes</span></button>
+          <button class="btn btn-glow" id="authBtn" data-i18n="nav.login">Connexion</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <section class="product-hero">
+    <div class="container" id="productContent">
+      <div class="text-center py-5">
+        <div class="spinner-border text-light" role="status"></div>
+        <p class="text-muted mt-3" data-i18n="product.loading">Chargement du produit...</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="related-section" id="relatedSection" style="display:none">
+    <div class="container">
+      <h2 class="related-title"><i class="bi bi-grid"></i> <span data-i18n="product.similar">Produits similaires</span></h2>
+      <div class="row g-4" id="relatedProducts"></div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container text-center">
+      <p class="mb-0">&copy; 2026 HiTech Store. <span data-i18n="footer.rights">Tous droits réservés.</span></p>
+    </div>
+  </footer>
+
+  <!-- Login Modal -->
+  <div class="modal fade" id="loginModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content glass-modal">
+        <div class="modal-header border-0">
+          <h5 class="modal-title"><i class="bi bi-box-arrow-in-right"></i> Connexion</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form id="loginForm">
+            <div class="form-floating mb-3">
+              <input type="email" class="form-control glass-input" id="loginEmail" placeholder="Email" required>
+              <label>Email</label>
+            </div>
+            <div class="form-floating mb-3">
+              <input type="password" class="form-control glass-input" id="loginPassword" placeholder="Mot de passe" required>
+              <label>Mot de passe</label>
+            </div>
+            <div id="loginError" class="alert alert-danger d-none"></div>
+            <button type="submit" class="btn btn-glow w-100" id="loginSubmitBtn">Se connecter</button>
+          </form>
+          <div class="text-center my-3">
+            <span class="text-muted">ou continuer avec</span>
+          </div>
+          <div class="d-flex gap-2 justify-content-center">
+            <a href="/api/oauth/google" class="btn btn-social btn-google" title="Google"><i class="bi bi-google"></i></a>
+            <a href="/api/oauth/apple" class="btn btn-social btn-apple" title="Apple"><i class="bi bi-apple"></i></a>
+            <a href="/api/oauth/github" class="btn btn-social btn-github" title="GitHub"><i class="bi bi-github"></i></a>
+            <a href="/api/oauth/facebook" class="btn btn-social btn-facebook" title="Facebook"><i class="bi bi-facebook"></i></a>
+          </div>
+          <hr class="border-secondary">
+          <p class="text-center mb-0">Pas de compte ? <a href="#" id="showRegister" class="accent-link">S'inscrire</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Register Modal -->
+  <div class="modal fade" id="registerModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content glass-modal">
+        <div class="modal-header border-0">
+          <h5 class="modal-title"><i class="bi bi-person-plus"></i> Inscription</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form id="registerForm">
+            <div class="row">
+              <div class="col-6 mb-3"><div class="form-floating"><input type="text" class="form-control glass-input" id="regFirstName" placeholder="Prénom" required><label>Prénom</label></div></div>
+              <div class="col-6 mb-3"><div class="form-floating"><input type="text" class="form-control glass-input" id="regLastName" placeholder="Nom" required><label>Nom</label></div></div>
+            </div>
+            <div class="form-floating mb-3"><input type="email" class="form-control glass-input" id="regEmail" placeholder="Email" required><label>Email</label></div>
+            <div class="form-floating mb-3"><input type="password" class="form-control glass-input" id="regPassword" placeholder="Mot de passe" required><label>Mot de passe (min 6)</label></div>
+            <div id="regError" class="alert alert-danger d-none"></div>
+            <button type="submit" class="btn btn-glow w-100">Créer mon compte</button>
+          </form>
+          <hr class="border-secondary">
+          <p class="text-center mb-0">Déjà un compte ? <a href="#" id="showLogin" class="accent-link">Se connecter</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Checkout Modal -->
+  <div class="modal fade" id="checkoutModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content glass-modal">
+        <div class="modal-header border-0">
+          <h5 class="modal-title" id="checkoutTitle"><i class="bi bi-bag-check"></i> Commander</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div id="checkoutProductInfo" class="mb-4 p-3 rounded" style="background:var(--bg-card);border:1px solid var(--border-color)"></div>
+          <form id="checkoutForm">
+            <input type="hidden" id="checkoutProductId">
+            <h6 class="mb-3"><i class="bi bi-person"></i> Vos informations</h6>
+            <div class="row">
+              <div class="col-6 mb-3"><div class="form-floating"><input type="text" class="form-control glass-input" id="coFirstName" placeholder="Prénom" required><label>Prénom</label></div></div>
+              <div class="col-6 mb-3"><div class="form-floating"><input type="text" class="form-control glass-input" id="coLastName" placeholder="Nom" required><label>Nom</label></div></div>
+            </div>
+            <div class="row">
+              <div class="col-6 mb-3"><div class="form-floating"><input type="email" class="form-control glass-input" id="coEmail" placeholder="Email" required><label>Email</label></div></div>
+              <div class="col-6 mb-3"><div class="form-floating"><input type="tel" class="form-control glass-input" id="coPhone" placeholder="Téléphone"><label>Téléphone</label></div></div>
+            </div>
+            <div class="mb-3"><div class="form-floating"><input type="text" class="form-control glass-input" id="coAddress" placeholder="Adresse"><label>Adresse (optionnel)</label></div></div>
+            <hr class="border-secondary">
+            <h6 class="mb-3"><i class="bi bi-key"></i> Informations pour le service <span id="coProviderName" class="gradient-text"></span></h6>
+            <div class="alert alert-info py-2"><small><i class="bi bi-info-circle"></i> Ces informations seront utilisées pour activer votre service sur le site officiel.</small></div>
+            <div class="mb-3"><div class="form-floating"><input type="email" class="form-control glass-input" id="coProviderEmail" placeholder="Email du compte" required><label>Email pour le compte <span id="coProviderLabel"></span></label></div></div>
+            <div class="mb-3"><div class="form-floating"><input type="password" class="form-control glass-input" id="coProviderPassword" placeholder="Mot de passe"><label>Mot de passe (optionnel - pour créer le compte)</label></div></div>
+            <div class="mb-3"><div class="form-floating"><textarea class="form-control glass-input" id="coNotes" placeholder="Notes" style="height:60px"></textarea><label>Notes (optionnel)</label></div></div>
+            <hr class="border-secondary">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <span class="text-muted">Service</span><span id="coPrice">0.00 TND</span>
+            </div>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <span class="text-muted">TVA</span><span id="coCommission">0.00 TND</span>
+            </div>
+            <div class="d-flex justify-content-between align-items-center fs-5 fw-bold">
+              <span>Total à payer</span><span id="coTotal" class="gradient-text">0.00 TND</span>
+            </div>
+            <div id="checkoutError" class="alert alert-danger d-none mt-3"></div>
+            <button type="submit" class="btn btn-glow w-100 mt-3 btn-lg" id="checkoutSubmitBtn">
+              <i class="bi bi-lock-fill"></i> Confirmer et payer
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Payment Modal -->
+  <div class="modal fade" id="paymentModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content glass-modal">
+        <div class="modal-header border-0">
+          <h5 class="modal-title"><i class="bi bi-credit-card"></i> Paiement</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body text-center">
+          <div class="mb-4">
+            <i class="bi bi-check-circle-fill text-success" style="font-size:4rem"></i>
+            <h4 class="mt-3">Commande confirmée !</h4>
+            <p class="text-muted">Numéro: <strong id="payOrderNumber"></strong></p>
+          </div>
+          <div class="p-3 rounded mb-3" style="background:var(--bg-card);border:1px solid var(--border-color)">
+            <p class="mb-1"><strong id="payProductName"></strong></p>
+            <p class="mb-1 text-muted" id="payDelivery"></p>
+            <p class="mb-0 gradient-text fs-5" id="payTotal"></p>
+          </div>
+          <p class="text-muted small">Vous recevrez un email de confirmation avec les détails de votre service.</p>
+          <button class="btn btn-glow w-100" data-bs-dismiss="modal">Fermer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/static/js/i18n.js"></script>
+  <script src="/static/js/product-detail.js"></script>
+</body>
+</html>

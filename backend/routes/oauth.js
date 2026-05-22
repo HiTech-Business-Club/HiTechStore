@@ -121,16 +121,77 @@ router.post('/apple/callback', asyncHandler(async (req, res) => {
   }
 }));
 
-// GitHub OAuth routes  
-router.get('/github', passport.authenticate('github', { scope: ['user:email'] }));
+// GitHub OAuth routes (manual implementation)
+router.get('/github', asyncHandler(async (req, res) => {
+  const clientId = config.oauth.github.clientID;
+  const redirectUri = encodeURIComponent(config.oauth.github.callbackURL);
+  const scope = 'user:email';
+  const state = Math.random().toString(36).substring(7);
 
-router.get('/github/callback',
-  passport.authenticate('github', { failureRedirect: '/?auth=error' }),
-  asyncHandler(async (req, res) => {
-    const token = generateToken(req.user);
-    res.redirect(`${config.frontend.url}/?auth=success&token=${token}`);
-  })
-);
+  res.redirect(`https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}&state=${state}`);
+}));
+
+router.get('/github/callback', asyncHandler(async (req, res) => {
+  const { code } = req.query;
+
+  if (!code) {
+    return res.redirect(`${config.frontend.url}/?auth=error`);
+  }
+
+  // Exchange code for access token
+  const tokenResponse = await fetch('https://github.com/login/oauth/access_token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+    body: JSON.stringify({
+      client_id: config.oauth.github.clientID,
+      client_secret: config.oauth.github.clientSecret,
+      code,
+    }),
+  });
+  const tokenData = await tokenResponse.json();
+
+  if (!tokenData.access_token) {
+    return res.redirect(`${config.frontend.url}/?auth=error`);
+  }
+
+  // Fetch user profile
+  const userResponse = await fetch('https://api.github.com/user', {
+    headers: { Authorization: `Bearer ${tokenData.access_token}`, 'User-Agent': 'HiTechStore' },
+  });
+  const userData = await userResponse.json();
+
+  if (!userData.id) {
+    return res.redirect(`${config.frontend.url}/?auth=error`);
+  }
+
+  // Fetch email if not public
+  let email = userData.email;
+  if (!email) {
+    const emailResponse = await fetch('https://api.github.com/user/emails', {
+      headers: { Authorization: `Bearer ${tokenData.access_token}`, 'User-Agent': 'HiTechStore' },
+    });
+    const emails = await emailResponse.json();
+    const primary = emails.find(e => e.primary && e.verified);
+    email = primary?.email || emails[0]?.email || `${userData.id}@github.local`;
+  }
+
+  let user = await User.findOne({ 'oauth.githubId': userData.id.toString() });
+
+  if (!user) {
+    const nameParts = (userData.name || '').split(' ');
+    user = await User.create({
+      firstName: nameParts[0] || 'User',
+      lastName: nameParts.slice(1).join(' ') || 'GitHub',
+      email,
+      oauth: { provider: 'github', githubId: userData.id.toString() },
+      password: `oauth_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      verified: true,
+    });
+  }
+
+  const token = generateToken(user);
+  res.redirect(`${config.frontend.url}/?auth=success&token=${token}`);
+}));
 
 // Facebook OAuth routes
 router.get('/facebook', asyncHandler(async (req, res) => {

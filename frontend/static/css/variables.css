@@ -1,0 +1,189 @@
+/* === HiTech Store Design System === */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+:root {
+  --bg-primary: #06060b;
+  --bg-secondary: #0d0d14;
+  --bg-tertiary: #13131d;
+  --bg-card: rgba(255,255,255,0.025);
+  --bg-card-hover: rgba(255,255,255,0.05);
+  --border-color: rgba(255,255,255,0.06);
+  --border-light: rgba(255,255,255,0.1);
+  --text-primary: #f0f0f5;
+  --text-secondary: #c8c8d8;
+  --text-muted: #6e6e8a;
+  --accent: #7c5cfc;
+  --accent-light: #a78bfa;
+  --accent-dark: #5b3fd9;
+  --accent-glow: rgba(124,92,252,0.35);
+  --success: #10b981;
+  --success-glow: rgba(16,185,129,0.3);
+  --danger: #ef4444;
+  --danger-glow: rgba(239,68,68,0.3);
+  --warning: #f59e0b;
+  --warning-glow: rgba(245,158,11,0.3);
+  --info: #3b82f6;
+  --gradient: linear-gradient(135deg, #7c5cfc 0%, #06b6d4 100%);
+  --gradient-warm: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
+  --gradient-cool: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.4);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.5);
+  --shadow-glow: 0 0 30px var(--accent-glow);
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* === Buttons === */
+.btn-glow {
+  background: var(--gradient);
+  border: none;
+  color: white;
+  padding: 0.6rem 1.5rem;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: 0.9rem;
+  box-shadow: 0 4px 20px var(--accent-glow);
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+.btn-glow::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 50%);
+  opacity: 0;
+  transition: var(--transition);
+}
+.btn-glow:hover { transform: translateY(-2px); box-shadow: 0 8px 30px var(--accent-glow); color: white; }
+.btn-glow:hover::before { opacity: 1; }
+.btn-glow:active { transform: translateY(0); }
+
+.btn-glass {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  padding: 0.6rem 1.25rem;
+  border-radius: var(--radius-md);
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: var(--transition);
+  backdrop-filter: blur(10px);
+}
+.btn-glass:hover { background: var(--bg-card-hover); border-color: var(--border-light); color: var(--text-primary); }
+
+/* === Text === */
+.gradient-text {
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* === Inputs === */
+.glass-input {
+  background: var(--bg-tertiary) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-primary) !important;
+  border-radius: var(--radius-md) !important;
+  transition: var(--transition) !important;
+  font-size: 0.9rem;
+}
+.glass-input:focus {
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 3px var(--accent-glow), 0 0 20px var(--accent-glow) !important;
+  background: var(--bg-secondary) !important;
+}
+.glass-input::placeholder { color: var(--text-muted); }
+
+/* === Notifications === */
+.notification {
+  position: fixed;
+  top: 90px;
+  right: 24px;
+  padding: 14px 24px;
+  border-radius: var(--radius-md);
+  color: white;
+  font-weight: 500;
+  font-size: 0.9rem;
+  z-index: 9999;
+  animation: notifSlide 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: var(--shadow-lg);
+}
+.notification-success { background: rgba(16,185,129,0.9); }
+.notification-error { background: rgba(239,68,68,0.9); }
+
+@keyframes notifSlide {
+  from { transform: translateX(120%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* === Dropdown === */
+.glass-dropdown {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  backdrop-filter: blur(20px);
+  padding: 0.5rem;
+  min-width: 140px;
+}
+.glass-dropdown .dropdown-item {
+  color: var(--text-secondary);
+  border-radius: var(--radius-sm);
+  padding: 0.5rem 0.75rem;
+  font-size: 0.88rem;
+  transition: var(--transition);
+}
+.glass-dropdown .dropdown-item:hover,
+.glass-dropdown .dropdown-item.active {
+  background: rgba(124,92,252,0.1);
+  color: var(--text-primary);
+}
+
+/* === Scrollbar === */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-primary); }
+::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+/* === Selection === */
+::selection { background: var(--accent); color: white; }
+
+/* === RTL Support === */
+[dir="rtl"] .sidebar { border-right: none; border-left: 1px solid var(--border-color); }
+[dir="rtl"] .nav-item { border-left: none; border-right: 3px solid transparent; }
+[dir="rtl"] .nav-item.active { border-left-color: transparent; border-right-color: var(--accent); }
+[dir="rtl"] .product-features li::before { content: ''; }
+[dir="rtl"] .product-features li::after { content: '✓'; color: var(--success); font-weight: bold; font-size: 0.7rem; }
+[dir="rtl"] .me-3 { margin-right: 0 !important; margin-left: 0.75rem !important; }
+[dir="rtl"] .ms-2 { margin-left: 0 !important; margin-right: 0.5rem !important; }
+[dir="rtl"] .text-md-start { text-align: right !important; }
+[dir="rtl"] .text-md-end { text-align: left !important; }
+[dir="rtl"] .dropdown-menu { text-align: right; }
